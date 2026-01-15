@@ -361,7 +361,6 @@ const Chat: React.FC = () => {
             </Button>
           </div>
 
-          {/* Chat Panel - Fixed in middle with stable size */}
           <div 
             style={{ 
               flex: 1,
@@ -528,7 +527,6 @@ const Chat: React.FC = () => {
             </div>
           </div>
 
-          {/* Input Panel - Fixed at bottom, never moves */}
           <div style={{ 
             flexShrink: 0,
             height: '100px',

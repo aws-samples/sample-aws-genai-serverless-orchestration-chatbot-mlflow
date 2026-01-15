@@ -21,7 +21,6 @@ export const loadConfig = async () => {
     // Update the API_CONFIG with actual values
     API_CONFIG.API_URL = config.API_URL;
     API_CONFIG.REGION = config.REGION;
-    // WebSocket API doesn't use API keys, so we ignore config.API_KEY
     
     console.log('Configuration loaded successfully');
     console.log('Using WebSocket API URL:', API_CONFIG.API_URL);

@@ -1,7 +1,7 @@
+import '@cloudscape-design/global-styles/index.css';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
-import '@cloudscape-design/global-styles/index.css';
 
 // Add global styles for full-page layout
 const style = document.createElement('style');

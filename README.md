@@ -1,89 +1,8 @@
 # Build a serverless conversational AI agent using Claude with LangGraph and managed MLflow on Amazon SageMaker AI
 
-This sample shows how to build a serverless conversational AI agent using Claude with angiography and managed MLflow on Amazon SageMaker AI. It demonstrates how to combine the reasoning capabilities of Large Language Models (LLMs) from Amazon Bedrock, the orchestration features of LangGraph, and the observability provided by managed MLflow on Amazon SageMaker AI to create customer service agents.
+This repository demonstrates how to build a serverless conversational AI agent for customer service using Amazon Bedrock's Claude models, LangGraph for orchestration, and managed MLflow on Amazon SageMaker AI for observability. The solution showcases how to combine the reasoning capabilities of Large Language Models (LLMs), stateful conversation management with LangGraph, and comprehensive experiment tracking through MLflow to create intelligent customer service agents that can handle multi-turn conversations, order management, and account inquiries.
 
-### Repository Structure
-
-```
-project-root/
-├── backend/
-│   ├── graphs/
-│   │   ├── __init__.py
-│   │   └── primary_graph.py        # LangGraph workflow definition
-│   ├── nodes/
-│   │   ├── __init__.py
-│   │   ├── entry_intent.py         # Entry node for conversation
-│   │   ├── order_confirmation.py   # Order confirmation handling
-│   │   └── resolution.py           # Resolution node
-│   ├── static/
-│   │   └── static.py               # System prompts and configurations
-│   ├── tools_config/
-│   │   ├── __init__.py
-│   │   ├── agent_tool.py           # Tool configurations for agent
-│   │   └── entry_intent_tool.py    # Entry intent tool specs
-│   ├── utils/
-│   │   ├── __init__.py
-│   │   ├── rds_utils.py            # Database utility functions
-│   │   └── utils.py                # General utilities
-│   ├── app.py                      # Agent memory management layer
-│   ├── main_handler.py             # Main Lambda entry point (routes events)
-│   ├── websocket_handler.py        # WebSocket API Lambda handler
-│   ├── requirements.txt            # Python dependencies
-│   └── Dockerfile                  # Container definition for Lambda
-├── frontend/                       # React frontend application
-│   ├── public/
-│   ├── src/
-│   │   ├── components/
-│   │   │   └── Chat.tsx            # Main chat component
-│   │   ├── config/
-│   │   │   └── api-config.ts       # API configuration
-│   │   ├── types/
-│   │   │   └── window.d.ts         # TypeScript definitions
-│   │   ├── App.tsx                 # Main app component
-│   │   └── index.tsx               # Entry point
-│   ├── package.json
-│   └── tsconfig.json
-├── infra/                          # AWS CDK Infrastructure
-│   ├── initializerLambda/
-│   │   ├── layers/
-│   │   ├── build_layer.sh
-│   │   ├── data.py
-│   │   ├── index.py
-│   │   └── requirements.txt
-│   ├── lambda_functions/
-│   │   └── config_generator.py     # Runtime configuration generator
-│   ├── stacks/
-│   │   ├── __init__.py
-│   │   ├── principal_backend.py      # Main backend infrastructure stack
-│   │   ├── principal_frontend.py   # Frontend infrastructure stack
-│   │   ├── runtime_config_stack.py # Runtime configuration stack
-│   │   ├── websocket_api_stack.py  # WebSocket API definition
-│   │   ├── database_stack.py       # PostgreSQL RDS database
-│   │   ├── dynamodb_stack.py       # DynamoDB tables (conversations + connections)
-│   │   ├── frontend_stack.py       # S3 + CloudFront for React app
-│   │   ├── lambda_stack.py         # Lambda function definition
-│   │   ├── mlflow_stack.py         # MLflow tracking server on SageMaker
-│   │   ├── sagemaker_base_stack.py # SageMaker base resources
-│   │   ├── sagemaker_stack.py      # SageMaker domain and user profile
-│   │   └── vpc_stack.py            # VPC and networking
-│   ├── app.py                      # CDK app entry point
-│   ├── cleanup.sh                  # Resource cleanup script
-│   └── requirements.txt            # CDK dependencies
-├── notebooks/                      # Jupyter notebooks for testing
-│   ├── 00-01-Basics.ipynb
-│   ├── 01-02-Basics.ipynb
-│   ├── 01-03-Basics.ipynb
-│   ├── 01-04-Basics.ipynb
-│   ├── 01-05-Basics.ipynb
-│   ├── 01-06-MLFlow-basic.ipynb
-│   └── 01-07-Lambda-test.ipynb
-└── images/                         # Architecture diagrams
-    ├── graph.png
-    ├── infra.png
-    ├── infra2.png
-    ├── infra3.png
-    └── mlflow_trace.png
-```
+We'll walk through deploying a complete serverless architecture using AWS CDK that includes real-time WebSocket communication, VPC-secured infrastructure with private subnets for Lambda and RDS, VPC endpoints for AWS services (Bedrock, SageMaker), DynamoDB for conversation state management, PostgreSQL RDS for structured data storage, and MLflow integration for tracking all LLM interactions, performance metrics, and conversation flows. This solution enables teams to build, deploy, monitor, and continuously improve conversational AI agents with full observability and traceability through a single, integrated platform.
 
 ## Architecture Overview
 
@@ -131,9 +50,8 @@ project-root/
    - VPC endpoints for secure service communication
    - Encryption at rest and in transit
 
-## Deployment Instructions
 
-### Prerequisites
+## Prerequisites
 
 - AWS CLI configured with appropriate permissions
 - AWS CDK CLI installed (`npm install -g aws-cdk`)
@@ -143,6 +61,8 @@ project-root/
 - **CloudWatch Logs role ARN configured in API Gateway account settings** (required for API Gateway logging):
   - [Create IAM role with required permissions](https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-logging.html#set-up-access-logging-permissions)
   - [Configure the role in API Gateway console](https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-logging.html#set-up-access-logging-using-console) - steps 1-3 only
+
+## Deployment Guide
 
 ### 1. Clone the repository and set up the project root
 
@@ -214,7 +134,7 @@ This command deploys both stacks in the correct order:
 
 CDK automatically handles stack dependencies and cross-stack references.
 
-### 6. Cleanup Resources
+## Cleanup
 
 To completely remove all resources:
 
@@ -252,44 +172,6 @@ MLFLOW_TRACKING_ARN=
 CONNECTIONS_TABLE=
 ```
 
-## Technical Implementation
-
-### Event-Driven Architecture
-
-```python
-# main_handler.py - Smart routing
-def handler(event, context):
-    if 'requestContext' in event and 'routeKey' in event['requestContext']:
-        # Route to WebSocket handler
-        return websocket_handler(event, context)
-```
-
-### WebSocket Communication
-
-- **Routes**: `$connect`, `$disconnect`, `sendMessage`
-- **Real-time**: Bidirectional communication
-- **State Management**: DynamoDB connection tracking
-- **Error Handling**: Graceful connection management
-
-### MLflow Integration
-
-```python
-# Automatic experiment tracking
-@mlflow.trace
-def invoke_bedrock_model(prompt):
-    # Bedrock model invocation with automatic tracing
-    pass
-```
-
-### Container Deployment
-
-```dockerfile
-FROM public.ecr.aws/lambda/python:3.11-x86_64
-# Optimized for fast cold starts
-# Efficient dependency management
-CMD ["main_handler.handler"]
-```
-
 ## Application Workflow
 
 ![Agentic Workflow](./images/graph.png)
@@ -325,7 +207,7 @@ CMD ["main_handler.handler"]
 
 - Basic functionality testing
 - Conversation flow validation
-  - MLflow integration testing
+- MLflow integration testing
 
 **Local Testing**:
 
@@ -396,3 +278,11 @@ My phone number is 312-555-8204
 ```
 Yes
 ```
+
+## Contributing
+
+See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.
+
+## License
+
+This library is licensed under the MIT-0 License. See the LICENSE file.
