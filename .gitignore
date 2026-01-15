@@ -1,0 +1,98 @@
+# Project specific
+.chatbot/*
+infra/cdk.context.json
+infra/cdk.out
+infra/initializerLambda/layers/**
+cdk.json
+.env
+.env.*
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+.eggs/
+.mypy_cache/
+.python-version
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+venv/
+.venv/
+ENV/
+
+# CDK
+cdk.out/
+.cdk.staging/
+cdk-outputs.json
+
+# Frontend
+frontend/node_modules
+frontend/node_modules/**
+frontend/build
+frontend/build/**
+frontend/.env
+frontend/.env.*
+frontend/.cache
+frontend/coverage
+
+# IDE and editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+**/.DS_Store
+.project
+.classpath
+.settings/
+*.sublime-workspace
+*.sublime-project
+
+# Logs and databases
+*.log
+*.sqlite
+*.db
+logs/
+log/
+
+# Data files
+*.csv
+*.dat
+*.pkl
+*.h5
+*.model
+*.weights
+*.pb
+
+# Archives
+*.zip
+*.tar.gz
+*.tar
+*.gz
+*.rar
+*.7z
+
+# Temporary files
+*.bak
+*.tmp
+.temp/
+tmp/
+.ipynb_checkpoints/
