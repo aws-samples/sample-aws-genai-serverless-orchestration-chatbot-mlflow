@@ -9,20 +9,22 @@ import json
 import logging
 import os
 import sys
-from typing import Any, Dict, List, Optional, Union
+from typing import Any
+from typing import Dict
+from typing import List
+from typing import Optional
+from typing import Union
 
 import mlflow
 from dotenv import load_dotenv
 from langgraph.graph import END
 from mlflow.entities import SpanType
-
-from .static import static
+from static import static
 
 # from backend import tools_config
-from .tools_config.entry_intent_tool import (
-    tool_config as entry_intent_tool_config,
-)
-from .utils import utils
+from tools_config.entry_intent_tool import tool_config as entry_intent_tool_config
+from utils import utils
+
 
 # Get the absolute path to the backend directory
 current_dir = os.getcwd()  # Get current working directory

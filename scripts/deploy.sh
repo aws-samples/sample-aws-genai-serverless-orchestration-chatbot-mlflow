@@ -13,6 +13,15 @@ if ! aws sts get-caller-identity &> /dev/null; then
   exit 1
 fi
 
+# Authenticate with ECR Public to avoid rate limits
+echo "🔐 Authenticating with AWS ECR Public..."
+if command -v docker &> /dev/null; then
+  aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
+  echo "✅ ECR Public authentication successful"
+else
+  echo "⚠️  Docker not found. Skipping ECR Public authentication."
+fi
+
 # Check for Python virtual environment
 if [ ! -d ".venv" ]; then
   echo "❌ Python virtual environment not found. Run: ./scripts/install.sh"

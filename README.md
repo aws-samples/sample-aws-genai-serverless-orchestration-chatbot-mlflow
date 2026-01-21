@@ -62,6 +62,8 @@ We'll walk through deploying a complete serverless architecture using AWS CDK th
   - [Create IAM role with required permissions](https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-logging.html#set-up-access-logging-permissions)
   - [Configure the role in API Gateway console](https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-logging.html#set-up-access-logging-using-console) - steps 1-3 only
 
+**Note:** The deployment script automatically authenticates with AWS ECR Public to avoid rate limits when pulling Lambda base images.
+
 ## Deployment Guide
 
 ### 1. Clone the repository and set up the project root

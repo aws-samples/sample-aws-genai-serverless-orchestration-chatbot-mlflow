@@ -14,8 +14,8 @@ import boto3
 import pytz
 from boto3.dynamodb.conditions import Key
 from botocore.config import Config
+from graphs import primary_graph
 
-from .graphs import primary_graph
 
 # Create PST timezone
 pst = pytz.timezone("America/Los_Angeles")

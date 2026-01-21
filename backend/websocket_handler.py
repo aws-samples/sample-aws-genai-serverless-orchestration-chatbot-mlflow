@@ -11,13 +11,14 @@ import os
 import time
 import warnings
 from functools import lru_cache
-from typing import Any, Dict
+from typing import Any
+from typing import Dict
 
+import app
 import boto3
 import mlflow
+from utils.utils import extract_reply
 
-from . import app
-from .utils.utils import extract_reply
 
 # Disable MLflow dataset source warnings
 warnings.filterwarnings('ignore', category=UserWarning, module='mlflow.data.dataset_source_registry')

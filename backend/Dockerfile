@@ -1,12 +1,11 @@
 FROM public.ecr.aws/lambda/python:3.12-x86_64
 
-# Create non-root user
-RUN useradd -m -u 1001 appuser
+# Install dependencies and create non-root user
+RUN dnf install -y shadow-utils gcc gcc-c++ python3-devel && \
+    /usr/sbin/useradd -m -u 1001 appuser && \
+    dnf clean all
 
 WORKDIR ${LAMBDA_TASK_ROOT}
-
-# Copy requirements file first for better layer caching
-RUN dnf install -y gcc gcc-c++ python3-devel && dnf clean all
 
 # Copy requirements file
 COPY requirements.txt .

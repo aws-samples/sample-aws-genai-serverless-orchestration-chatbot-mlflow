@@ -9,12 +9,11 @@ import os
 import sys
 
 from dotenv import load_dotenv  # type: ignore
-from langgraph.graph import (
-    END,  # type: ignore
-    START,
-    StateGraph,
-)
+from langgraph.graph import END  # type: ignore
+from langgraph.graph import START
+from langgraph.graph import StateGraph
 from typing_extensions import TypedDict  # type: ignore
+
 
 # Get the absolute path to the backend directory
 current_dir = os.getcwd()  # Get current working directory
@@ -25,7 +24,9 @@ sys.path.append(backend_path)
 load_dotenv()
 
 #import nodes
-from ..nodes import entry_intent, order_confirmation, resolution
+from nodes import entry_intent
+from nodes import order_confirmation
+from nodes import resolution
 
 
 class State(TypedDict):
@@ -99,4 +100,5 @@ graph_builder.add_conditional_edges(
 
 graph_builder.add_edge('resolution', END)
 
+graph = graph_builder.compile()
 graph = graph_builder.compile()

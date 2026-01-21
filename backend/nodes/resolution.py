@@ -8,18 +8,22 @@ and cleanup after successful order processing.
 import logging
 import os
 import sys
-from typing import Any, Dict, List, Optional, Union
+from typing import Any
+from typing import Dict
+from typing import List
+from typing import Optional
+from typing import Union
 
 import mlflow  # type: ignore
 from dotenv import load_dotenv  # type: ignore
 from langgraph.graph import END  # type: ignore
 from mlflow.entities import SpanType  # type: ignore
-
-from .static import static
+from static import static
 
 # from backend import tools_config
-from .tools_config.agent_tool import tool_config as agent_tool_config
-from .utils import utils
+from tools_config.agent_tool import tool_config as agent_tool_config
+from utils import utils
+
 
 # Get the absolute path to the backend directory
 current_dir = os.getcwd()  # Get current working directory

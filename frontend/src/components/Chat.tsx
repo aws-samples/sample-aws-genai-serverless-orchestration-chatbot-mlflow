@@ -307,8 +307,9 @@ const Chat: React.FC = () => {
                 navigator.clipboard.writeText(part);
               }}
             >
-              {/* eslint-disable-next-line typescript.react.portability.i18next.jsx-not-internationalized */}
+              {/* eslint-disable react/jsx-no-literals */}
               Copy
+              {/* eslint-enable react/jsx-no-literals */}
             </button>
             <pre>{part}</pre>
           </div>
@@ -356,8 +357,9 @@ const Chat: React.FC = () => {
               disabled={loading || messages.length === 0}
               iconName="remove"
             >
-              {/* eslint-disable-next-line typescript.react.portability.i18next.jsx-not-internationalized */}
+              {/* eslint-disable react/jsx-no-literals */}
               Clear Chat
+              {/* eslint-enable react/jsx-no-literals */}
             </Button>
           </div>
 
@@ -399,8 +401,9 @@ const Chat: React.FC = () => {
                     borderRadius: '50%',
                     animation: 'spin 1s linear infinite'
                   }}></div>
-                  {/* eslint-disable-next-line typescript.react.portability.i18next.jsx-not-internationalized */}
+                  {/* eslint-disable react/jsx-no-literals */}
                   <p style={{ marginTop: '15px' }}>Establishing connection...</p>
+                  {/* eslint-enable react/jsx-no-literals */}
                   <style>{`
                     @keyframes spin {
                       0% { transform: rotate(0deg); }
@@ -419,8 +422,9 @@ const Chat: React.FC = () => {
                   padding: '20px'
                 }}>
                   <Icon name="status-info" size="big" />
-                  {/* eslint-disable-next-line typescript.react.portability.i18next.jsx-not-internationalized */}
+                  {/* eslint-disable react/jsx-no-literals */}
                   <p style={{ marginTop: '10px' }}>Start a conversation with AWS Bedrock</p>
+                  {/* eslint-enable react/jsx-no-literals */}
                 </div>
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
@@ -457,7 +461,9 @@ const Chat: React.FC = () => {
                               flexShrink: 0,
                               marginBottom: '2px'
                             }}>
+                              {/* eslint-disable react/jsx-no-literals */}
                               <span style={{ color: 'white', fontWeight: 'bold', fontSize: '12px' }}>AI</span>
+                              {/* eslint-enable react/jsx-no-literals */}
                             </div>
                           )}
                           
@@ -542,8 +548,9 @@ const Chat: React.FC = () => {
                   value={input}
                   onChange={handleInputChange}
                   onKeyDown={handleKeyDown}
-                  /* eslint-disable-next-line typescript.react.portability.i18next.jsx-not-internationalized */
+                  /* eslint-disable react/jsx-no-literals */
                   placeholder={connectionStatus === 'connected' ? "Type your message..." : "Connecting..."}
+                  /* eslint-enable react/jsx-no-literals */
                   disabled={loading || connectionStatus !== 'connected'}
                   autoFocus
                   spellcheck={true}
@@ -556,8 +563,9 @@ const Chat: React.FC = () => {
                 iconName="send"
                 fullWidth
               >
-                {/* eslint-disable-next-line typescript.react.portability.i18next.jsx-not-internationalized */}
+                {/* eslint-disable react/jsx-no-literals */}
                 Send
+                {/* eslint-enable react/jsx-no-literals */}
               </Button>
             </Grid>
           </div>
