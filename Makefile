@@ -1,15 +1,20 @@
-.PHONY: help install build deploy deploy-legacy deploy-backend deploy-frontend clean update-cdk
+.PHONY: help install build deploy clean update-cdk
 
 # Default target
 help:
 	@echo "AWS GenAI Serverless Orchestration Chatbot with MLflow - Deployment Commands"
 	@echo ""
 	@echo "Available commands:"
-	@echo "  install          - Install all dependencies (Python + Node.js)"
+	@echo "  install          - Install all dependencies (Python + Node.js + Lambda layers)"
 	@echo "  build            - Build the frontend application"
 	@echo "  update-cdk       - Update CDK CLI to latest version"
-	@echo "  deploy           - Deploy everything (backend + frontend)"
-	@echo "  clean            - Clean build artifacts"
+	@echo "  deploy           - Deploy complete infrastructure (backend + frontend)"
+	@echo "  clean            - Remove all AWS resources and clean local build artifacts"
+	@echo ""
+	@echo "Deployment workflow:"
+	@echo "  1. make install  - First time setup"
+	@echo "  2. make deploy   - Deploy to AWS"
+	@echo "  3. make clean    - Remove everything when done"
 	@echo ""
 
 # Install dependencies
@@ -34,14 +39,7 @@ deploy:
 	@echo "🚀 Deploying complete application..."
 	@./scripts/deploy.sh
 
-# Clean build artifacts
+# Clean AWS resources and local files
 clean:
-	@echo "🧹 Cleaning build artifacts..."
+	@echo "🧹 Cleaning AWS resources and local artifacts..."
 	@./scripts/cleanup.sh
-	@rm -rf frontend/build
-	@rm -rf infra/cdk.out
-	@rm -rf .venv
-	@find . -type d -name "__pycache__" -exec rm -rf {} +
-	@find . -type d -name "*.egg-info" -exec rm -rf {} +
-	@find . -type d -name ".pytest_cache" -exec rm -rf {} +
-	@find . -type f -name "*.pyc" -delete

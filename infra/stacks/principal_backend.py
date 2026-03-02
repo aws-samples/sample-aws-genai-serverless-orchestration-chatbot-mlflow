@@ -120,3 +120,8 @@ class PrincipalBackendStack(Stack):
         sagemaker_base.node.add_dependency(vpc_stack)
         sagemaker_domain.node.add_dependency(mlflow_stack)
         sagemaker_domain.node.add_dependency(sagemaker_base)
+        
+        # Export SageMaker Domain ID
+        CfnOutput(self, "SageMakerDomainId",
+                 value=sagemaker_domain.domain.attr_domain_id,
+                 description="SageMaker Domain ID")
