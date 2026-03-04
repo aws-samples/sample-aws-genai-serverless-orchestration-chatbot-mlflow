@@ -46,7 +46,7 @@ class VpcStack(NestedStack):
             "EndpointSecurityGroup",
             vpc=self.vpc,
             description="Security group for VPC endpoints",
-            allow_all_outbound=True,
+            allow_all_outbound=False,
             security_group_name=vpc_endpoint_security_group_name,
         )
 
@@ -100,8 +100,6 @@ class VpcStack(NestedStack):
             "SSMMessagesEndpoint": ("ssmmessages", True),
             "EC2MessagesEndpoint": ("ec2messages", True),
             "KMSEndpoint": ("kms", True),
-            "StepFunctionsEndpoint": ("states", True),
-            "EventsEndpoint": ("events", True),
             "BedrockEndpoint": ("bedrock", True),
             "BedrockRuntimeEndpoint": ("bedrock-runtime", True),
             "RDSEndpoint": ("rds", True),  # Added RDS endpoint

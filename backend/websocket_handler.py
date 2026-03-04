@@ -231,12 +231,14 @@ def message_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         try:
             error_msg = {
                 'type': 'error',
-                'message': f"An error occurred: {str(e)}",
+                'message': 'An unexpected error occurred. Please try again.',
                 'timestamp': time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
             }
             send_to_connection(connection_id, error_msg, endpoint_url)
-        except:
-            pass  # If we can't send error message, just log it
+        except Exception as send_err:
+            logger.warning(
+                "Failed to send error message to connection: %s", send_err
+            )
             
         return {'statusCode': 500}
 

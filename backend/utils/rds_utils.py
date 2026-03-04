@@ -54,7 +54,6 @@ def get_db_connection():
 
     max_retries = 3
     retry_count = 0
-    last_error = None
     base_delay = 0.5  # Start with 500ms
 
     while retry_count < max_retries:
@@ -75,7 +74,6 @@ def get_db_connection():
             print("Database connection established successfully")
             return connection
         except Exception as error:
-            last_error = error
             retry_count += 1
             # Log error without exposing connection details
             print(

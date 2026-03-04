@@ -10,9 +10,6 @@ import os
 import sys
 from typing import Any
 from typing import Dict
-from typing import List
-from typing import Optional
-from typing import Union
 
 import mlflow  # type: ignore
 from dotenv import load_dotenv  # type: ignore

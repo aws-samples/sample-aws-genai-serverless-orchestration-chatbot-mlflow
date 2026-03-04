@@ -67,6 +67,7 @@ class PrincipalBackendStack(Stack):
             mlflow_endpoint=vpc_stack.mlflow_endpoint,
             database=database_stack.database,
             database_security_group=database_stack.db_security_group,
+            lambda_security_group=database_stack.lambda_security_group,
             conversation_table=dynamodb_stack.conversation_table,
             mlflow_tracking_server_id=mlflow_stack.tracking_server_id,
             mlflow_security_group=mlflow_stack.mlflow_security_group,

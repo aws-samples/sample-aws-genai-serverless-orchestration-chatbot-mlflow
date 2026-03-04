@@ -96,6 +96,7 @@ def process_message(
 
 def _process_tool_call(tool_name, tool_input):
     """Process the tool call based on the given tool name and input."""
+    connection = None
     try:
         connection = get_db_connection()
         with connection.cursor() as cursor:
