@@ -40,16 +40,17 @@ class DatabaseStack(NestedStack):
             "DatabaseSecurityGroup",
             vpc=vpc,
             description="Security group for RDS database",
-            allow_all_outbound=True,
+            allow_all_outbound=False,
             security_group_name="bedrock-chatbot-db-sg",
         )
 
+        # Create security group for Lambda
         self.lambda_security_group = ec2.SecurityGroup(
             self,
             "LambdaSecurityGroup",
             vpc=vpc,
             description="Security group for Lambda function",
-            allow_all_outbound=True,
+            allow_all_outbound=False,
             security_group_name="bedrock-chatbot-lambda-sg",
         )
 
@@ -60,12 +61,6 @@ class DatabaseStack(NestedStack):
             description="Allow Lambda to connect to RDS",
         )
 
-        # Allow connections from the entire VPC CIDR range
-        self.db_security_group.add_ingress_rule(
-            peer=ec2.Peer.ipv4(vpc.vpc_cidr_block),
-            connection=ec2.Port.tcp(5432),
-            description="Allow connections from VPC CIDR range",
-        )
         # Create KMS key for database encryption
         database_encryption_key = kms.Key(
             self,

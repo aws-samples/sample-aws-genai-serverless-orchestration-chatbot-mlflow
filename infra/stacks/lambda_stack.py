@@ -26,6 +26,7 @@ class LambdaStack(NestedStack):
         mlflow_endpoint,
         database,
         database_security_group,
+        lambda_security_group,
         conversation_table,
         mlflow_tracking_server_id,
         mlflow_security_group,
@@ -53,20 +54,21 @@ class LambdaStack(NestedStack):
             removal_policy=RemovalPolicy.DESTROY,
         )
 
-        # Create security group for Lambda with restricted outbound
-        self.lambda_security_group = ec2.SecurityGroup(
-            self,
-            "LambdaSecurityGroup",
-            vpc=vpc,
-            description="Security group for Lambda function",
-            allow_all_outbound=False,
-        )
+        # Use the Lambda security group from DatabaseStack
+        self.lambda_security_group = lambda_security_group
 
         # Add specific outbound rules for database access
         self.lambda_security_group.add_egress_rule(
             database_security_group,
             ec2.Port.tcp(5432),
             "Allow PostgreSQL access to RDS",
+        )
+
+        # Allow Lambda security group to connect to database
+        database_security_group.add_ingress_rule(
+            self.lambda_security_group,
+            ec2.Port.tcp(5432),
+            "Allow Lambda to connect to RDS",
         )
 
         # Add outbound rule for MLflow access
@@ -170,7 +172,7 @@ class LambdaStack(NestedStack):
         )
 
         # Create log group for the Lambda function with encryption
-        lambda_logs = logs.LogGroup(
+        logs.LogGroup(
             self,
             "LambdaFunctionLogs",
             log_group_name=f"/aws/lambda/{self.lambda_function.function_name}",
@@ -187,7 +189,7 @@ class LambdaStack(NestedStack):
         bedrock_policy = iam.PolicyStatement(
             actions=["bedrock:InvokeModel", "bedrock:Converse"],
             resources=[
-                # Support models in current region (us-west-2)
+                # Support cross-region inference profiles
                 f"arn:aws:bedrock:*::foundation-model/anthropic.claude-3-5-sonnet-*",
                 f"arn:aws:bedrock:*::foundation-model/us.anthropic.claude-3-5-sonnet-*",
                 f"arn:aws:bedrock:*:{Stack.of(self).account}:inference-profile/us.anthropic.claude-3-5-sonnet-*",

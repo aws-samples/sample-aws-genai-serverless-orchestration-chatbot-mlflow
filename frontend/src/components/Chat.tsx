@@ -33,7 +33,7 @@ interface WebSocketMessage {
   processing_time?: number;
 }
 
-// Utility function to extract content from <reply> tags
+// Utility function to extract content from <reply> tags (defensive fallback)
 const extractReplyContent = (text: string): string => {
   const pattern = /<reply>([\s\S]*?)<\/reply>/;
   const match = pattern.exec(text);
@@ -49,6 +49,8 @@ const Chat: React.FC = () => {
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const websocketRef = useRef<WebSocket | null>(null);
   const sessionIdRef = useRef<string>('');
+  const reconnectAttemptsRef = useRef<number>(0);
+  const maxReconnectAttempts = 5;
 
   // Initialize WebSocket connection
   const initializeWebSocket = useCallback(() => {
@@ -63,25 +65,21 @@ const Chat: React.FC = () => {
     }
 
     try {
-      console.log('Attempting to connect to WebSocket:', API_CONFIG.API_URL);
       setConnectionStatus('connecting');
       const ws = new WebSocket(API_CONFIG.API_URL);
       websocketRef.current = ws;
 
       ws.onopen = () => {
-        console.log('✅ WebSocket connected successfully');
         setConnectionStatus('connected');
+        reconnectAttemptsRef.current = 0;
       };
 
       ws.onmessage = (event) => {
         try {
           const wsMessage: WebSocketMessage = JSON.parse(event.data);
-          console.log('WebSocket message received:', wsMessage);
           
           switch (wsMessage.type) {
             case 'status':
-              // Handle status messages (e.g., "Processing your request...")
-              console.log('Status:', wsMessage.message);
               break;
               
             case 'response':
@@ -102,8 +100,6 @@ const Chat: React.FC = () => {
               break;
               
             case 'error':
-              // Handle error messages as chat messages
-              console.error('WebSocket error message:', wsMessage.message);
               const errorMessage: Message = {
                 role: 'error',
                 content: wsMessage.message || 'An error occurred',
@@ -114,33 +110,35 @@ const Chat: React.FC = () => {
               break;
           }
         } catch (err) {
-          console.error('Error parsing WebSocket message:', err);
           setLoading(false);
         }
       };
 
-      ws.onerror = (error) => {
-        console.error('WebSocket error:', error);
+      ws.onerror = () => {
         setConnectionStatus('error');
         setLoading(false);
       };
 
       ws.onclose = (event) => {
-        console.log('WebSocket closed:', event.code, event.reason);
         setConnectionStatus('disconnected');
         if (event.code !== 1000) { // Not a normal closure
-          const errorMessage: Message = {
-            role: 'error',
-            content: 'Connection lost. Please refresh the page.',
-            timestamp: new Date().toISOString()
-          };
-          setMessages(prev => [...prev, errorMessage]);
+          if (reconnectAttemptsRef.current < maxReconnectAttempts) {
+            const delay = Math.min(1000 * Math.pow(2, reconnectAttemptsRef.current), 30000);
+            reconnectAttemptsRef.current += 1;
+            setTimeout(() => initializeWebSocket(), delay);
+          } else {
+            const errorMessage: Message = {
+              role: 'error',
+              content: 'Connection lost. Please refresh the page.',
+              timestamp: new Date().toISOString()
+            };
+            setMessages(prev => [...prev, errorMessage]);
+          }
         }
         setLoading(false);
       };
 
     } catch (err) {
-      console.error('Error creating WebSocket connection:', err);
       setConnectionStatus('error');
       const errorMessage: Message = {
         role: 'error',
@@ -157,7 +155,6 @@ const Chat: React.FC = () => {
       try {
         const configLoaded = await loadConfig();
         if (configLoaded) {
-          console.log('Config loaded, initializing WebSocket...');
           initializeWebSocket();
         } else {
           const errorMessage: Message = {
@@ -168,7 +165,6 @@ const Chat: React.FC = () => {
           setMessages(prev => [...prev, errorMessage]);
         }
       } catch (err) {
-        console.error('Error initializing app:', err);
         const errorMessage: Message = {
           role: 'error',
           content: 'Failed to initialize application',
@@ -211,7 +207,6 @@ const Chat: React.FC = () => {
     setInput('');
     // Create a new session ID when clearing
     sessionIdRef.current = `session-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
-    console.log('Clear chat: New session ID created:', sessionIdRef.current);
   };
 
   const formatTimestamp = (timestamp: string) => {
@@ -253,8 +248,6 @@ const Chat: React.FC = () => {
         session_id: sessionIdRef.current
       };
       
-      console.log('Sending WebSocket message:', wsMessage);
-      
       // Send message via WebSocket
       if (websocketRef.current && websocketRef.current.readyState === WebSocket.OPEN) {
         websocketRef.current.send(JSON.stringify(wsMessage));
@@ -263,7 +256,6 @@ const Chat: React.FC = () => {
       }
       
     } catch (error: any) {
-      console.error('Error sending message:', error);
       const errorMessage: Message = {
         role: 'error',
         content: typeof error === 'object' ? error.message : 'Failed to send message',
@@ -423,7 +415,7 @@ const Chat: React.FC = () => {
                 }}>
                   <Icon name="status-info" size="big" />
                   {/* eslint-disable react/jsx-no-literals */}
-                  <p style={{ marginTop: '10px' }}>Start a conversation with AWS Bedrock</p>
+                  <p style={{ marginTop: '10px' }}>Start a conversation with Amazon Bedrock</p>
                   {/* eslint-enable react/jsx-no-literals */}
                 </div>
               ) : (

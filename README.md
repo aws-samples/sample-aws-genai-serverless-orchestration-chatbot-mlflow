@@ -25,10 +25,8 @@ This repository accompanies the AWS Machine Learning Blog post [Build a serverle
 
    - Private subnets hosting Lambda and RDS
    - Public subnets with NAT Gateway for outbound traffic
-   - VPC Endpoints:
-     - Bedrock Runtime
-     - Bedrock API
-     - SageMaker API
+   - VPC Endpoints for Bedrock Runtime, Bedrock API, and SageMaker API
+   - Security groups controlling network access between components
 
 3. **Compute & Services**
 
@@ -50,10 +48,8 @@ This repository accompanies the AWS Machine Learning Blog post [Build a serverle
    - **CloudFront**: Content delivery and caching
    - **PostgreSQL RDS**: Structured data storage
 
-5. **Security & Best Practices**
-   - [IAM](https://aws.amazon.com/iam/) roles with least privilege principles
-   - Security groups with minimal required access
-   - VPC endpoints for secure service communication
+5. **IAM & Encryption**
+   - Dedicated IAM roles per component
    - Encryption at rest and in transit
 
 
